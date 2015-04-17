@@ -1,8 +1,12 @@
+import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -10,6 +14,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  * Actual game.
@@ -19,6 +29,8 @@ import javax.imageio.ImageIO;
 
 public class Game {
     
+	private Clip fireGun;
+	private Clip fireRocket;
     // Use this to generate a random number.
     private Random random;
     
@@ -134,6 +146,18 @@ public class Game {
     {
         try 
         {
+        	try {
+				fireGun = AudioSystem.getClip();
+				fireRocket = AudioSystem.getClip();
+				AudioInputStream inputStreamGun = AudioSystem.getAudioInputStream(new File("GUN.wav"));
+				AudioInputStream inputStreamRocket = AudioSystem.getAudioInputStream(new File("rocket.wav"));
+				fireGun.open(inputStreamGun);
+				fireRocket.open(inputStreamRocket);
+				
+			} catch (LineUnavailableException e) {
+			} catch (UnsupportedAudioFileException e) {
+			}
+        	
             // Images of environment
             //URL skyColorImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/sky_color.jpg");
             skyColorImg = ImageIO.read(new File("1_sky.png"));
@@ -164,6 +188,7 @@ public class Game {
             // Image of mouse cursor.
            // URL mouseCursorImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/mouse_cursor.png");
             mouseCursorImg = ImageIO.read(new File("mouse_cursor.png"));
+           
             
             // Helicopter machine gun bullet.
            // URL bulletImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/bullet.png");
@@ -456,6 +481,10 @@ public class Game {
             player.numberOfAmmo--;
   
             Bullet b = new Bullet(player.machineGunXcoordinate, player.machineGunYcoordinate, mousePosition);
+            fireGun.start();
+            if(!fireGun.isActive()){
+            	fireGun.setFramePosition(0);
+            }
             bulletsList.add(b);
             
             Animation shotAnim = new Animation(shotImg, 40, 50, 5, 20, false, player.xCoordinate + player.helicopterBodyImg.getWidth() - 61, player.yCoordinate + player.helicopterBodyImg.getHeight() - 40, 0);
@@ -473,9 +502,15 @@ public class Game {
     {
         if(player.isFiredRocket(gameTime))
         {
+        	if(fireRocket.isRunning()){
+        		fireRocket.stop();
+        		fireRocket.setFramePosition(0);
+        	} else {
+        		fireRocket.setFramePosition(0);
+        	}
             Rocket.timeOfLastCreatedRocket = gameTime;
             player.numberOfRockets--;
-            
+            fireRocket.start();
             Rocket r = new Rocket();
             r.Initialize(player.rocketHolderXcoordinate, player.rocketHolderYcoordinate);
             rocketsList.add(r);
