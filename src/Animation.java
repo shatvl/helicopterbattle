@@ -1,5 +1,3 @@
-
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -55,7 +53,7 @@ public class Animation {
     private long showDelay;
     
     // At what time was animation created.
-    private long timeOfAnimationCration;
+    private long timeOfAnimationCreation;
 
 
     /**
@@ -85,7 +83,7 @@ public class Animation {
         
         this.showDelay = showDelay;
         
-        timeOfAnimationCration = System.currentTimeMillis();
+        timeOfAnimationCreation = System.currentTimeMillis();
 
         startingXOfFrameInImage = 0;
         endingXOfFrameInImage = frameWidth;
@@ -151,7 +149,7 @@ public class Animation {
         this.Update();
         
         // Checks if show delay is over.
-        if(this.timeOfAnimationCration + this.showDelay <= System.currentTimeMillis())
+        if(this.timeOfAnimationCreation + this.showDelay <= System.currentTimeMillis())
             g2d.drawImage(animImage, x, y, x + frameWidth, y + frameHeight, startingXOfFrameInImage, 0, endingXOfFrameInImage, frameHeight, null);
     }
 }

@@ -1,5 +1,3 @@
-
-
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -30,7 +28,7 @@ public abstract class Canvas extends JPanel implements KeyListener, MouseListene
         this.setFocusable(true);
         this.setBackground(Color.black);
         
-        // If you will draw your own mouse cursor or if you just want that mouse cursor disapear, 
+        // If you will draw your own mouse cursor or if you just want that mouse cursor disappear, 
         // insert "true" into if condition and mouse cursor will be removed.
         if(true)
         {
