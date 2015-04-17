@@ -149,9 +149,6 @@ public class Game {
             // Load images for enemy helicopter
            // URL helicopterBodyImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_helicopter_body.png");
             EnemyHelicopter.helicopterBodyImg = ImageIO.read(new File("2_helicopter_body.png"));
-           // URL helicopterFrontPropellerAnimImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_front_propeller_anim.png");
-            EnemyHelicopter.helicopterFrontPropellerAnimImg = ImageIO.read(new File("2_front_propeller_anim.png"));
-           // URL helicopterRearPropellerAnimImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_rear_propeller_anim.png");
             EnemyHelicopter.helicopterRearPropellerAnimImg = ImageIO.read(new File("2_rear_propeller_anim.png"));
             
             // Images of rocket and its smoke.

@@ -29,11 +29,9 @@ public class EnemyHelicopter {
     
     // Images of enemy helicopter. Images are loaded and set in Game class in LoadContent() method.
     public static BufferedImage helicopterBodyImg;
-    public static BufferedImage helicopterFrontPropellerAnimImg;
     public static BufferedImage helicopterRearPropellerAnimImg;
     
-    // Animation of the helicopter propeller.
-    private Animation helicopterFrontPropellerAnim;
+  
     private Animation helicopterRearPropellerAnim;
     // Offset for the propeler. We add offset to the position of the position of helicopter.
     private static int offsetXFrontPropeller = 4;
@@ -60,7 +58,6 @@ public class EnemyHelicopter {
         this.yCoordinate = yCoordinate;
         
         // Initialize animation object.
-        helicopterFrontPropellerAnim = new Animation(helicopterFrontPropellerAnimImg, 158, 16, 3, 20, true, xCoordinate + offsetXFrontPropeller, yCoordinate + offsetYFrontPropeller, 0);
         helicopterRearPropellerAnim = new Animation(helicopterRearPropellerAnimImg, 47, 47, 10, 10, true, xCoordinate + offsetXRearPropeller, yCoordinate + offsetYRearPropeller, 0);
        
         // Moving speed and direction of enemy.
@@ -111,7 +108,6 @@ public class EnemyHelicopter {
         xCoordinate += movingXspeed;
         
         // Moves helicoper propeler animations with helicopter.
-        helicopterFrontPropellerAnim.changeCoordinates(xCoordinate + offsetXFrontPropeller, yCoordinate + offsetYFrontPropeller);
         helicopterRearPropellerAnim.changeCoordinates(xCoordinate + offsetXRearPropeller, yCoordinate + offsetYRearPropeller);
     }
     
@@ -123,8 +119,7 @@ public class EnemyHelicopter {
      */
     public void Draw(Graphics2D g2d)
     { 
-        helicopterFrontPropellerAnim.Draw(g2d);
-        g2d.drawImage(helicopterBodyImg, xCoordinate, yCoordinate, null);
+         g2d.drawImage(helicopterBodyImg, xCoordinate, yCoordinate, null);
         helicopterRearPropellerAnim.Draw(g2d);
     }
     

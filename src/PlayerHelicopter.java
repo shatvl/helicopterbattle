@@ -46,15 +46,11 @@ public class PlayerHelicopter {
     
     // Images of helicopter and its propellers.
     public BufferedImage helicopterBodyImg;
-    private BufferedImage helicopterFrontPropellerAnimImg;
     private BufferedImage helicopterRearPropellerAnimImg;
     
     // Animation of the helicopter propeller.
-    private Animation helicopterFrontPropellerAnim;
     private Animation helicopterRearPropellerAnim;
     // Offset for the propeler. We add offset to the position of the position of helicopter.
-    private int offsetXFrontPropeller;
-    private int offsetYFrontPropeller;
     private int offsetXRearPropeller;
     private int offsetYRearPropeller;
     
@@ -105,11 +101,9 @@ public class PlayerHelicopter {
         this.acceleratingYspeed = 0.2;
         this.stoppingXspeed = 0.1;
         this.stoppingYspeed = 0.1;
-
-        this.offsetXFrontPropeller = 70;
-        this.offsetYFrontPropeller = -23;        
-        this.offsetXRearPropeller = -6;
-        this.offsetYRearPropeller = -21;
+       
+        this.offsetXRearPropeller = -9;
+        this.offsetYRearPropeller = -5;
         
         this.offsetXRocketHolder = 138;
         this.offsetYRocketHolder = 40;
@@ -130,7 +124,6 @@ public class PlayerHelicopter {
         try 
         {
             helicopterBodyImg = ImageIO.read(new File("1_helicopter_body.png"));
-            helicopterFrontPropellerAnimImg = ImageIO.read(new File("1_front_propeller_anim.png"));
             helicopterRearPropellerAnimImg = ImageIO.read(new File("1_rear_propeller_anim_blur.png"));
         } 
         catch (IOException ex) {
@@ -138,7 +131,6 @@ public class PlayerHelicopter {
         }
         
         // Now that we have images of propeller animation we initialize animation object.
-        helicopterFrontPropellerAnim = new Animation(helicopterFrontPropellerAnimImg, 204, 34, 3, 20, true, xCoordinate + offsetXFrontPropeller, yCoordinate + offsetYFrontPropeller, 0);
         helicopterRearPropellerAnim = new Animation(helicopterRearPropellerAnimImg, 54, 54, 4, 20, true, xCoordinate + offsetXRearPropeller, yCoordinate + offsetYRearPropeller, 0);
     }
     
@@ -244,7 +236,6 @@ public class PlayerHelicopter {
         // Move helicopter and its propellers.
         xCoordinate += movingXspeed;
         yCoordinate += movingYspeed;
-        helicopterFrontPropellerAnim.changeCoordinates(xCoordinate + offsetXFrontPropeller, yCoordinate + offsetYFrontPropeller);
         helicopterRearPropellerAnim.changeCoordinates(xCoordinate + offsetXRearPropeller, yCoordinate + offsetYRearPropeller);
         
         // Change position of the rocket holder.
@@ -264,9 +255,8 @@ public class PlayerHelicopter {
      */
     public void Draw(Graphics2D g2d)
     {
-        helicopterFrontPropellerAnim.Draw(g2d);
-        helicopterRearPropellerAnim.Draw(g2d);
         g2d.drawImage(helicopterBodyImg, xCoordinate, yCoordinate, null);
+        helicopterRearPropellerAnim.Draw(g2d);
     }
     
 }
