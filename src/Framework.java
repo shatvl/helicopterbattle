@@ -1,5 +1,3 @@
-
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -200,7 +198,7 @@ public class Framework extends Canvas {
             // Repaint the screen.
             repaint();
             
-            // Here we calculate the time that defines for how long we should put threat to sleep to meet the GAME_FPS.
+            // Here we calculate the time that defines for how long we should put thread to sleep to meet the GAME_FPS.
             timeTaken = System.nanoTime() - beginTime;
             timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / milisecInNanosec; // In milliseconds
             // If the time is less than 10 milliseconds, then we will put thread to sleep for 10 millisecond so that some other thread can do some work.

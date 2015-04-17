@@ -1,5 +1,3 @@
-
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -225,7 +223,7 @@ public class Game {
             return; // If player is destroyed, we don't need to do thing below.
         }
         // When a player is out of rockets and machine gun bullets, and all lists 
-        // of bullets, rockets and explosions are empyt(end showing) we finish the game.
+        // of bullets, rockets and explosions are empty(end showing) we finish the game.
         if(player.numberOfAmmo <= 0 && 
            player.numberOfRockets <= 0 && 
            bulletsList.isEmpty() && 
@@ -668,11 +666,11 @@ public class Game {
     {
         boolean didItHitEnemy = false;
         
-        // Current rocket rectangle. // I inserted number 2 insted of rocketImg.getWidth() because I wanted that rocket 
+        // Current rocket rectangle. // I inserted number 2 instead of rocketImg.getWidth() because I wanted that rocket 
         // is over helicopter when collision is detected, because actual image of helicopter isn't a rectangle shape. (We could calculate/make 3 areas where helicopter can be hit and checks these areas, but this is easier.)
         Rectangle rocketRectangle = new Rectangle(rocket.xCoordinate, rocket.yCoordinate, 2, Rocket.rocketImg.getHeight());
         
-        // Go trough all enemis.
+        // Go trough all enemies.
         for(int j = 0; j < enemyHelicopterList.size(); j++)
         {
             EnemyHelicopter eh = enemyHelicopterList.get(j);
@@ -680,7 +678,7 @@ public class Game {
             // Current enemy rectangle.
             Rectangle enemyRectangel = new Rectangle(eh.xCoordinate, eh.yCoordinate, EnemyHelicopter.helicopterBodyImg.getWidth(), EnemyHelicopter.helicopterBodyImg.getHeight());
 
-            // Is current rocket over currnet enemy?
+            // Is current rocket over current enemy?
             if(rocketRectangle.intersects(enemyRectangel))
             {
                 didItHitEnemy = true;
@@ -710,7 +708,7 @@ public class Game {
             RocketSmoke rs = rocketSmokeList.get(i);
             
             // Is it time to remove the smoke.
-            if(rs.didSmokeDisapper(gameTime))
+            if(rs.didSmokeDisappear(gameTime))
                 rocketSmokeList.remove(i);
             
             // Set new transparency of rocket smoke image.

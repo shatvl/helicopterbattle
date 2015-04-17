@@ -74,7 +74,7 @@ public class RocketSmoke {
      * @param gameTime The current elapsed game time in nanoseconds.
      * @return True if the smoke should be removed, false otherwise.
      */
-    public boolean didSmokeDisapper(long gameTime){
+    public boolean didSmokeDisappear(long gameTime){
         long currentLifeTime = gameTime - timeOfCreation;
         
         if(currentLifeTime >= smokeLifeTime)
