@@ -44,7 +44,7 @@ public class Game {
     private ArrayList<Rocket> rocketsList;
     // List of all the rockets smoke.
     private ArrayList<RocketSmoke> rocketSmokeList;
-    
+    private ArrayList<Animation> bulletFire;
     // Image for the sky color.
     private BufferedImage skyColorImg;
     
@@ -61,6 +61,8 @@ public class Game {
     private MovingBackground mountainsMoving;
     private MovingBackground groundMoving;
     
+    
+    private BufferedImage shotImg;
     // Image of mouse cursor.
     private BufferedImage mouseCursorImg;
     
@@ -111,7 +113,7 @@ public class Game {
         explosionsList = new ArrayList<Animation>();
         
         bulletsList = new ArrayList<Bullet>();
-        
+        bulletFire = new ArrayList<Animation>();
         rocketsList = new ArrayList<Rocket>();
         rocketSmokeList = new ArrayList<RocketSmoke>();
         
@@ -157,8 +159,8 @@ public class Game {
            // URL rocketSmokeImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/rocket_smoke.png");
             RocketSmoke.smokeImg = ImageIO.read(new File("rocket_smoke.png"));
             
-            // Imege of explosion animation.
-            //URL explosionAnimImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/explosion_anim.png");
+            shotImg = ImageIO.read(new File("shot.png"));
+            
             explosionAnimImg = ImageIO.read(new File("explosion_anim.png"));
             
             // Image of mouse cursor.
@@ -168,6 +170,7 @@ public class Game {
             // Helicopter machine gun bullet.
            // URL bulletImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/bullet.png");
             Bullet.bulletImg = ImageIO.read(new File("bullet.png"));
+            
         } 
         catch (IOException ex) 
         {
@@ -179,8 +182,10 @@ public class Game {
         cloudLayer2Moving.Initialize(cloudLayer2Img, -2, 0);
         mountainsMoving.Initialize(mountainsImg, -1, Framework.frameHeight - groundImg.getHeight() - mountainsImg.getHeight() + 40);
         groundMoving.Initialize(groundImg, -1.2, Framework.frameHeight - groundImg.getHeight());
+       
+
     }
-    
+     
     
     /**
      * Restart game - reset some variables.
@@ -287,8 +292,17 @@ public class Game {
         for(int i = 0; i < bulletsList.size(); i++)
         {
             bulletsList.get(i).Draw(g2d);
+           
         }
         
+        for(int i = 0; i < bulletFire.size(); i++)
+        {
+        	if(bulletFire.get(i).active){
+        		bulletFire.get(i).Draw(g2d);
+        	} else {
+        	 bulletFire.remove(i);
+        	}
+        }
         // Draws all the rockets. 
         for(int i = 0; i < rocketsList.size(); i++)
         {
@@ -442,9 +456,12 @@ public class Game {
         {
             Bullet.timeOfLastCreatedBullet = gameTime;
             player.numberOfAmmo--;
-            
+  
             Bullet b = new Bullet(player.machineGunXcoordinate, player.machineGunYcoordinate, mousePosition);
             bulletsList.add(b);
+            
+            Animation shotAnim = new Animation(shotImg, 40, 50, 5, 20, false, player.xCoordinate + player.helicopterBodyImg.getWidth() - 61, player.yCoordinate + player.helicopterBodyImg.getHeight() - 40, 0);
+            bulletFire.add(shotAnim);
         }
     }
     
