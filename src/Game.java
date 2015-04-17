@@ -306,7 +306,7 @@ public class Game {
         
         // Draw statistics
         g2d.setFont(font);
-        g2d.setColor(Color.darkGray);
+        g2d.setColor(Color.RED);
         
         g2d.drawString(formatTime(gameTime), Framework.frameWidth/2 - 45, 21);
         g2d.drawString("DESTROYED: " + destroyedEnemies, 10, 21);
@@ -481,7 +481,7 @@ public class Game {
             // Add created enemy to the list of enemies.
             enemyHelicopterList.add(eh);
             
-            // Speed up enemy speed and aperence.
+            // Speed up enemy speed and appearence.
             EnemyHelicopter.speedUp();
             
             // Sets new time for last created enemy.

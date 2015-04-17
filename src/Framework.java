@@ -59,7 +59,7 @@ public class Framework extends Canvas {
     /**
      * Current state of the game
      */
-    public static GameState gameState;
+    public static GameState gameState;    
     
     /**
      * Elapsed game time in nanoseconds.
@@ -67,6 +67,8 @@ public class Framework extends Canvas {
     private long gameTime;
     // It is used for calculating elapsed time.
     private long lastTime;
+    //Current FPS based on time it took to draw current frame
+    private long currentFPS;
     
     // The actual game
     private Game game;
@@ -149,9 +151,11 @@ public class Framework extends Canvas {
                 case PLAYING:
                     gameTime += System.nanoTime() - lastTime;
                     
+                    lastTime = System.nanoTime();
+                    
                     game.UpdateGame(gameTime, mousePosition());
                     
-                    lastTime = System.nanoTime();
+                    //lastTime = System.nanoTime();
                 break;
                 case GAMEOVER:
                     //...
@@ -170,9 +174,12 @@ public class Framework extends Canvas {
                     Initialize();
                     // Load files - images, sounds, ...
                     LoadContent();
-
+                    
+                    currentFPS = 0;
+                    
                     // When all things that are called above finished, we change game status to main menu.
                     gameState = GameState.MAIN_MENU;
+                    
                 break;
                 case VISUALIZING:
                     // On Ubuntu OS (when I tested on my old computer) this.getWidth() method doesn't return the correct value immediately (eg. for frame that should be 800px width, returns 0 than 790 and at last 798px). 
@@ -201,13 +208,11 @@ public class Framework extends Canvas {
             // Here we calculate the time that defines for how long we should put thread to sleep to meet the GAME_FPS.
             timeTaken = System.nanoTime() - beginTime;
             timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / milisecInNanosec; // In milliseconds
-            // If the time is less than 10 milliseconds, then we will put thread to sleep for 10 millisecond so that some other thread can do some work.
-            if (timeLeft < 10) 
-                timeLeft = 10; //set a minimum
+            
             try {
-                 //Provides the necessary delay and also yields control so that other thread can do work.
-                 Thread.sleep(timeLeft);
-            } catch (InterruptedException ex) { }
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+			}
         }
     }
     
@@ -217,10 +222,13 @@ public class Framework extends Canvas {
     @Override
     public void Draw(Graphics2D g2d)
     {
+    	long drawStart;
         switch (gameState)
         {
             case PLAYING:
+            	drawStart = System.nanoTime();
                 game.Draw(g2d, mousePosition(), gameTime);
+                g2d.drawString("FPS: "       + secInNanosec / (System.nanoTime() - drawStart), 10, 121);
             break;
             case GAMEOVER:
                 drawMenuBackground(g2d);
