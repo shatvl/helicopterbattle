@@ -67,8 +67,6 @@ public class Framework extends Canvas {
     private long gameTime;
     // It is used for calculating elapsed time.
     private long lastTime;
-    //Current FPS based on time it took to draw current frame
-    private long currentFPS;
     
     // The actual game
     private Game game;
@@ -174,8 +172,6 @@ public class Framework extends Canvas {
                     Initialize();
                     // Load files - images, sounds, ...
                     LoadContent();
-                    
-                    currentFPS = 0;
                     
                     // When all things that are called above finished, we change game status to main menu.
                     gameState = GameState.MAIN_MENU;

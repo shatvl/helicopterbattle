@@ -1,72 +1,45 @@
-
-
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 /**
- * Helicopter machine gun bullet.
+ * Arbitrary bullet.
  * 
  * @author www.gametutorial.net
  */
 
-public class Bullet {
-    
-    // For creating new bullets.
-    public final static long timeBetweenNewBullets = Framework.secInNanosec / 10;
-    public static long timeOfLastCreatedBullet = 0;
-    
-    // Damage that is made to an enemy helicopter when it is hit with a bullet.
-    public static int damagePower = 20;
+public class Bullet {    
+    // Damage that a bullet does to enemies
+    public int damagePoints;
     
     // Position of the bullet on the screen. Must be of type double because movingXspeed and movingYspeed will not be a whole number.
     public double xCoordinate;
     public double yCoordinate;
     
-    // Moving speed and direction.
-    private static int bulletSpeed = 20;
-    private double movingXspeed;
-    private double movingYspeed;
+    // Bullet velocity
+    private double xVelocity;
+    private double yVelocity;
     
-    // Images of helicopter machine gun bullet. Image is loaded and set in Game class in LoadContent() method.
-    public static BufferedImage bulletImg;
-    
+    public BufferedImage bulletImg;
     
     /**
-     * Creates new machine gun bullet.
+     * Creates arbitrary bullet.
      * 
      * @param xCoordinate From which x coordinate was bullet fired?
      * @param yCoordinate From which y coordinate was bullet fired?
+     * @param xVelocity x component of velocity vector
+     * @param yVelocity y component of velocity vector
      * @param mousePosition Position of the mouse at the time of the shot.
      */
-    public Bullet(int xCoordinate, int yCoordinate, Point mousePosition)
+    public Bullet(double xCoordinate, double yCoordinate, double xVelocity, double yVelocity, int damagePoints, BufferedImage bullet)
     {
-        this.xCoordinate = xCoordinate;
+    	this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
-        
-        setDirectionAndSpeed(mousePosition);
+        this.xVelocity = xVelocity;
+        this.yVelocity = yVelocity;
+        this.damagePoints = damagePoints;
+        this.bulletImg = bullet;
     }
-    
-    
-    /**
-     * Calculate the speed on a x and y coordinate.
-     * 
-     * @param mousePosition 
-     */
-    private void setDirectionAndSpeed(Point mousePosition)
-    {
-        // Unit direction vector of the bullet.
-        double directionVx = mousePosition.x - this.xCoordinate;
-        double directionVy = mousePosition.y - this.yCoordinate;
-        double lengthOfVector = Math.sqrt(directionVx * directionVx + directionVy * directionVy);
-        directionVx = directionVx / lengthOfVector; // Unit vector
-        directionVy = directionVy / lengthOfVector; // Unit vector
-        
-        // Set speed.
-        this.movingXspeed = bulletSpeed * directionVx;
-        this.movingYspeed = bulletSpeed * directionVy;
-    }
-    
     
     /**
      * Checks if the bullet is left the screen.
@@ -75,11 +48,8 @@ public class Bullet {
      */
     public boolean isItLeftScreen()
     {
-        if(xCoordinate > 0 && xCoordinate < Framework.frameWidth &&
-           yCoordinate > 0 && yCoordinate < Framework.frameHeight)
-            return false;
-        else
-            return true;
+        return !(xCoordinate > 0 && xCoordinate < Framework.frameWidth &&
+                yCoordinate > 0 && yCoordinate < Framework.frameHeight  );
     }
     
     
@@ -88,8 +58,8 @@ public class Bullet {
      */
     public void Update()
     {
-        xCoordinate += movingXspeed;
-        yCoordinate += movingYspeed;
+        xCoordinate += xVelocity;
+        yCoordinate += yVelocity;
     }
     
     

@@ -2,6 +2,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -41,6 +42,13 @@ public class PlayerHelicopter {
     // Helicopter machinegun ammo.
     private final int numberOfAmmoInit = 1400;
     public int numberOfAmmo;
+    
+    // Helicopter machinegun bullet params
+    public final static long timeBetweenNewBullets = Framework.secInNanosec / 10;
+    public static long timeOfLastCreatedBullet = 0;
+    public final static int machineGunBulletSpeed = 20;
+    public final static int machineGunBulletDamage = 20;
+    public static BufferedImage machineGunBulletImg;
     
     // Images of helicopter and its propellers.
     public BufferedImage helicopterBodyImg;
@@ -168,7 +176,7 @@ public class PlayerHelicopter {
     {
         // Checks if left mouse button is down && if it is the time for a new bullet.
         if( Canvas.mouseButtonState(MouseEvent.BUTTON1) && 
-            ((gameTime - Bullet.timeOfLastCreatedBullet) >= Bullet.timeBetweenNewBullets) &&
+            ((gameTime - PlayerHelicopter.timeOfLastCreatedBullet) >= PlayerHelicopter.timeBetweenNewBullets) &&
             this.numberOfAmmo > 0) 
         {
             return true;
@@ -223,6 +231,19 @@ public class PlayerHelicopter {
                 movingYspeed += stoppingYspeed;
             else if(movingYspeed > 0)
                 movingYspeed -= stoppingYspeed;
+    }
+    
+    /**
+     * Creates new bullet which moves in direction specified by unit vector
+     * @param directionUnit unit vector
+     * @return new bullet
+     */
+    public Bullet spawnMachineGunBullet(Vector2d directionUnit)
+    {
+    	return new Bullet(machineGunXcoordinate, machineGunYcoordinate,
+    			machineGunBulletSpeed * directionUnit.x,
+    			machineGunBulletSpeed * directionUnit.y,
+    			machineGunBulletDamage, machineGunBulletImg);
     }
     
     
