@@ -31,6 +31,8 @@ public class Game {
     
 	private Clip fireGun;
 	private Clip fireRocket;
+	private Clip helicopter;
+	private Clip expl;
     // Use this to generate a random number.
     private Random random;
     
@@ -42,7 +44,8 @@ public class Game {
     
     // Enemy helicopters.
     private ArrayList<EnemyHelicopter> enemyHelicopterList;
-    
+    private ArrayList<Stone> stonesList;
+    private ArrayList<StoneSmoke> stonesSmokeList;
     // Explosions
     private ArrayList<Animation> explosionsList;
     private BufferedImage explosionAnimImg;
@@ -126,7 +129,8 @@ public class Game {
         rocketsList = new ArrayList<Rocket>();
         bulletFire = new ArrayList<Animation>();
         rocketSmokeList = new ArrayList<RocketSmoke>();
-        
+        stonesList = new ArrayList<Stone>();
+        stonesSmokeList = new ArrayList<StoneSmoke>();
         // Moving images.
         cloudLayer1Moving = new MovingBackground();
         cloudLayer2Moving = new MovingBackground();
@@ -149,8 +153,14 @@ public class Game {
         	try {
 				fireGun = AudioSystem.getClip();
 				fireRocket = AudioSystem.getClip();
+				helicopter = AudioSystem.getClip();
 				AudioInputStream inputStreamGun = AudioSystem.getAudioInputStream(new File("GUN.wav"));
 				AudioInputStream inputStreamRocket = AudioSystem.getAudioInputStream(new File("rocket.wav"));
+				AudioInputStream inputStreamHelicopter = AudioSystem.getAudioInputStream(new File("ain23.wav"));
+				expl = AudioSystem.getClip();
+				AudioInputStream inputStreamExpl = AudioSystem.getAudioInputStream(new File("expl.wav"));
+				expl.open(inputStreamExpl);
+				helicopter.open(inputStreamHelicopter);
 				fireGun.open(inputStreamGun);
 				fireRocket.open(inputStreamRocket);
 				
@@ -177,7 +187,8 @@ public class Game {
            // URL helicopterBodyImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_helicopter_body.png");
             EnemyHelicopter.helicopterBodyImg = ImageIO.read(new File("2_helicopter_body.png"));
             EnemyHelicopter.helicopterRearPropellerAnimImg = ImageIO.read(new File("2_rear_propeller_anim.png"));
-            
+            Stone.stoneImg = ImageIO.read(new File("kometa.png"));
+            StoneSmoke.smokeImg = ImageIO.read(new File("kometa_anim.png"));
             // Images of rocket and its smoke.
             //URL rocketImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/rocket.png");
             Rocket.rocketImg = ImageIO.read(new File("rocket.png"));
@@ -213,17 +224,19 @@ public class Game {
         player.Reset(Framework.frameWidth / 4, Framework.frameHeight / 4);
         
         EnemyHelicopter.restartEnemy();
-        
+        Stone.restartStone();
         PlayerHelicopter.timeOfLastCreatedBullet = 0;
         Rocket.timeOfLastCreatedRocket = 0;
         
         // Empty all the lists.
+ 
+        stonesSmokeList.clear();
         enemyHelicopterList.clear();
         playerBulletsList.clear();
         rocketsList.clear();
         rocketSmokeList.clear();
         explosionsList.clear();
-        
+        stonesList.clear();
         // Statistics
         runAwayEnemies = 0;
         destroyedEnemies = 0;
@@ -257,6 +270,7 @@ public class Game {
         }
         // If player is alive we update him.
         if(isPlayerAlive()){
+        	helicopter.loop(1);
             isPlayerShooting(gameTime, mousePosition);
             didPlayerFiredRocket(gameTime);
             player.isMoving();
@@ -274,6 +288,9 @@ public class Game {
         updateRocketSmoke(gameTime);
         
         /* Enemies */
+        updateStones(gameTime);
+        updateStonesSmoke(gameTime);
+        
         createEnemyHelicopter(gameTime);
         updateEnemies();
         
@@ -306,6 +323,10 @@ public class Game {
             enemyHelicopterList.get(i).Draw(g2d);
         }
         
+        for(int i = 0; i < stonesList.size(); i++)
+        {
+        	stonesList.get(i).Draw(g2d);
+        }
         // Draws all the bullets. 
         for(int i = 0; i < playerBulletsList.size(); i++)
         {
@@ -336,10 +357,14 @@ public class Game {
         {
             rocketSmokeList.get(i).Draw(g2d);
         }
-        
+        for(int i = 0; i < stonesSmokeList.size(); i++)
+        {
+        	stonesSmokeList.get(i).Draw(g2d);
+        }
         // Draw all explosions.
         for(int i = 0; i < explosionsList.size(); i++)
         {
+        	expl.start();	
             explosionsList.get(i).Draw(g2d);
         }
         
@@ -527,7 +552,7 @@ public class Game {
      * Creates a new enemy if it's time.
      * 
      * @param gameTime Game time.
-     */
+     */ 
     private void createEnemyHelicopter(long gameTime)
     {
         if(gameTime - EnemyHelicopter.timeOfLastCreatedEnemy >= EnemyHelicopter.timeBetweenNewEnemies)
@@ -546,7 +571,7 @@ public class Game {
             EnemyHelicopter.timeOfLastCreatedEnemy = gameTime;
         }
     }
-    
+   
     /**
      * Updates all enemies.
      * Move the helicopter and checks if he left the screen.
@@ -567,7 +592,7 @@ public class Game {
             Rectangle enemyRectangel = new Rectangle(eh.xCoordinate, eh.yCoordinate, EnemyHelicopter.helicopterBodyImg.getWidth(), EnemyHelicopter.helicopterBodyImg.getHeight());
             if(playerRectangel.intersects(enemyRectangel)){
                 player.health = 0;
-                
+                helicopter.stop();
                 // Remove helicopter from the list.
                 enemyHelicopterList.remove(i);
                 
@@ -575,6 +600,7 @@ public class Game {
                 for(int exNum = 0; exNum < 3; exNum++){
                     Animation expAnim = new Animation(explosionAnimImg, 134, 134, 12, 45, false, player.xCoordinate + exNum*60, player.yCoordinate - random.nextInt(100), exNum * 200 +random.nextInt(100));
                     explosionsList.add(expAnim);
+                    expl.setFramePosition(0);
                 }
                 // Add explosion of enemy helicopter.
                 for(int exNum = 0; exNum < 3; exNum++){
@@ -591,7 +617,7 @@ public class Game {
                 // Add explosion of helicopter.
                 Animation expAnim = new Animation(explosionAnimImg, 134, 134, 12, 45, false, eh.xCoordinate, eh.yCoordinate - explosionAnimImg.getHeight()/3, 0); // Substring 1/3 explosion image height (explosionAnimImg.getHeight()/3) so that explosion is drawn more at the center of the helicopter.
                 explosionsList.add(expAnim);
-
+                expl.setFramePosition(0);
                 // Increase the destroyed enemies counter.
                 destroyedEnemies++;
                 
@@ -610,7 +636,6 @@ public class Game {
             }
         }
     }
-    
     /**
      * Update bullets. 
      * It moves bullets.
@@ -670,6 +695,7 @@ public class Game {
      * 
      * @param gameTime Game time.
      */
+    
     private void updateRockets(long gameTime)
     {
         for(int i = 0; i < rocketsList.size(); i++)
@@ -707,12 +733,45 @@ public class Game {
             rocket.currentSmokeLifeTime *= 1.02;
             
             // Checks if current rocket hit any enemy.
-            if( checkIfRocketHitEnemy(rocket) )
+            if( checkIfRocketHitEnemy(rocket) ){
                 // Rocket was also destroyed so we remove it.
+            	expl.setFramePosition(0);
                 rocketsList.remove(i);
+            }
         }
     }
-    
+    private void updateStones(long gameTime)
+    {
+    	if(gameTime - Stone.timeOfLastCreatedEnemy >= Stone.timeBetweenNewStones)
+    	{
+    		Stone st = new Stone();
+    		int yCoordinate = 0;
+    		int xCoordinate = random.nextInt(Framework.frameWidth - Stone.stoneImg.getWidth());
+    		st.Initialize(xCoordinate, yCoordinate);
+    		stonesList.add(st);
+    		Stone.speedUp();
+    		Stone.timeOfLastCreatedEnemy = gameTime;
+    	}
+    	
+    	for(int i = 0; i < stonesList.size(); i++)
+    	{
+    		Stone stone = stonesList.get(i);
+    		stone.Update();
+    		if(stone.isBottomScreen())
+    		{
+    			stonesList.remove(i);
+    			continue;
+    		}
+    		StoneSmoke ss = new StoneSmoke();
+    		int yCoordinate = stone.yCoordinate + 10 - StoneSmoke.smokeImg.getHeight();
+    		int xCoordinate = stone.xCoordinate + 6 + random.nextInt(3);
+    		ss.Initialize(xCoordinate, yCoordinate, gameTime, stone.currentSmokeLifeTime);
+    		stonesSmokeList.add(ss);
+    		
+    		stone.currentSmokeLifeTime *= 1.001;
+   
+    	}
+    }
     /**
      * Checks if the given rocket is hit any of enemy helicopters.
      * 
@@ -773,6 +832,16 @@ public class Game {
         }
     }
     
+    private void updateStonesSmoke(long gameTime)
+    {
+    	for(int i = 0; i < stonesSmokeList.size(); i++)
+    	{
+    		StoneSmoke ss = stonesSmokeList.get(i);
+    		if(ss.didSmokeDisappear(gameTime))
+    			stonesSmokeList.remove(i);
+    		ss.updateTransparency(gameTime);
+    	}    		
+    }
     /**
      * Updates all the animations of an explosion and remove the animation when is over.
      */
