@@ -41,19 +41,20 @@ public class Game {
     private PlayerHelicopter player;
     
     // Enemy helicopters.
-    private ArrayList<EnemyHelicopter> enemyHelicopterList = new ArrayList<EnemyHelicopter>();
+    private ArrayList<EnemyHelicopter> enemyHelicopterList;
     
     // Explosions
     private ArrayList<Animation> explosionsList;
     private BufferedImage explosionAnimImg;
     
     // List of all the machine gun bullets.
-    private ArrayList<Bullet> bulletsList;
+    private ArrayList<Bullet> playerBulletsList;
     
     // List of all the rockets.
     private ArrayList<Rocket> rocketsList;
     // List of all the rockets smoke.
     private ArrayList<RocketSmoke> rocketSmokeList;
+    // Animation when player fires a bullet
     private ArrayList<Animation> bulletFire;
     // Image for the sky color.
     private BufferedImage skyColorImg;
@@ -70,7 +71,6 @@ public class Game {
     private MovingBackground cloudLayer2Moving;
     private MovingBackground mountainsMoving;
     private MovingBackground groundMoving;
-    
     
     private BufferedImage shotImg;
     // Image of mouse cursor.
@@ -122,9 +122,9 @@ public class Game {
         
         explosionsList = new ArrayList<Animation>();
         
-        bulletsList = new ArrayList<Bullet>();
-        bulletFire = new ArrayList<Animation>();
+        playerBulletsList = new ArrayList<Bullet>();
         rocketsList = new ArrayList<Rocket>();
+        bulletFire = new ArrayList<Animation>();
         rocketSmokeList = new ArrayList<RocketSmoke>();
         
         // Moving images.
@@ -170,6 +170,9 @@ public class Game {
             //URL groundImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/ground.png");
             groundImg = ImageIO.read(new File("ground.png"));
             
+            // Load images for player helicopter
+            PlayerHelicopter.machineGunBulletImg = ImageIO.read(new File("bullet.png"));
+            
             // Load images for enemy helicopter
            // URL helicopterBodyImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_helicopter_body.png");
             EnemyHelicopter.helicopterBodyImg = ImageIO.read(new File("2_helicopter_body.png"));
@@ -187,13 +190,7 @@ public class Game {
             
             // Image of mouse cursor.
            // URL mouseCursorImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/mouse_cursor.png");
-            mouseCursorImg = ImageIO.read(new File("mouse_cursor.png"));
-           
-            
-            // Helicopter machine gun bullet.
-           // URL bulletImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/bullet.png");
-            Bullet.bulletImg = ImageIO.read(new File("bullet.png"));
-            
+            mouseCursorImg = ImageIO.read(new File("mouse_cursor.png"));            
         } 
         catch (IOException ex) 
         {
@@ -205,8 +202,6 @@ public class Game {
         cloudLayer2Moving.Initialize(cloudLayer2Img, -2, 0);
         mountainsMoving.Initialize(mountainsImg, -1, Framework.frameHeight - groundImg.getHeight() - mountainsImg.getHeight() + 40);
         groundMoving.Initialize(groundImg, -1.2, Framework.frameHeight - groundImg.getHeight());
-       
-
     }
      
     
@@ -219,12 +214,12 @@ public class Game {
         
         EnemyHelicopter.restartEnemy();
         
-        Bullet.timeOfLastCreatedBullet = 0;
+        PlayerHelicopter.timeOfLastCreatedBullet = 0;
         Rocket.timeOfLastCreatedRocket = 0;
         
         // Empty all the lists.
         enemyHelicopterList.clear();
-        bulletsList.clear();
+        playerBulletsList.clear();
         rocketsList.clear();
         rocketSmokeList.clear();
         explosionsList.clear();
@@ -253,7 +248,7 @@ public class Game {
         // of bullets, rockets and explosions are empty(end showing) we finish the game.
         if(player.numberOfAmmo <= 0 && 
            player.numberOfRockets <= 0 && 
-           bulletsList.isEmpty() && 
+           playerBulletsList.isEmpty() && 
            rocketsList.isEmpty() && 
            explosionsList.isEmpty())
         {
@@ -312,20 +307,25 @@ public class Game {
         }
         
         // Draws all the bullets. 
-        for(int i = 0; i < bulletsList.size(); i++)
+        for(int i = 0; i < playerBulletsList.size(); i++)
         {
-            bulletsList.get(i).Draw(g2d);
+            playerBulletsList.get(i).Draw(g2d);
            
         }
         
+        // Draws bullet fire animation
         for(int i = 0; i < bulletFire.size(); i++)
         {
-        	if(bulletFire.get(i).active){
-        		bulletFire.get(i).Draw(g2d);
+        	Animation an = bulletFire.get(i);
+        	if(an.active) {
+        		an.changeCoordinates(player.xCoordinate + player.helicopterBodyImg.getWidth() - 61,
+        							 	 player.yCoordinate + player.helicopterBodyImg.getHeight() - 40);
+        		an.Draw(g2d);
         	} else {
-        	 bulletFire.remove(i);
+        		bulletFire.remove(i--);
         	}
         }
+        
         // Draws all the rockets. 
         for(int i = 0; i < rocketsList.size(); i++)
         {
@@ -462,10 +462,18 @@ public class Game {
      */
     private boolean isPlayerAlive()
     {
-        if(player.health <= 0)
-            return false;
-        
-        return true;
+        return player.health > 0;
+    }
+    
+    /**
+     * Convert mouse position to unit vector
+     * @param mousePosition
+     * @return unit vector
+     */
+    private static Vector2d mousePositionToVector(int xOrigin, int yOrigin, Point mousePosition)
+    {
+        Vector2d direction = new Vector2d(mousePosition.x - xOrigin, mousePosition.y - yOrigin);
+        return direction.multiply(1.0 / direction.length());
     }
     
     /**
@@ -477,18 +485,16 @@ public class Game {
     {
         if(player.isShooting(gameTime))
         {
-            Bullet.timeOfLastCreatedBullet = gameTime;
+            PlayerHelicopter.timeOfLastCreatedBullet = gameTime;
             player.numberOfAmmo--;
-  
-            Bullet b = new Bullet(player.machineGunXcoordinate, player.machineGunYcoordinate, mousePosition);
+            
+            Bullet b = player.spawnMachineGunBullet(mousePositionToVector(player.machineGunXcoordinate, player.machineGunYcoordinate, mousePosition));
             fireGun.start();
             if(!fireGun.isActive()){
             	fireGun.setFramePosition(0);
             }
-            bulletsList.add(b);
-            
-            Animation shotAnim = new Animation(shotImg, 40, 50, 5, 20, false, player.xCoordinate + player.helicopterBodyImg.getWidth() - 61, player.yCoordinate + player.helicopterBodyImg.getHeight() - 40, 0);
-            bulletFire.add(shotAnim);
+            bulletFire.add(new Animation(shotImg, 40, 50, 5, 40, false, 0, 0, 0));
+            playerBulletsList.add(b);
         }
     }
     
@@ -613,24 +619,26 @@ public class Game {
      */
     private void updateBullets()
     {
-        for(int i = 0; i < bulletsList.size(); i++)
+        for(int i = 0; i < playerBulletsList.size(); i++)
         {
-            Bullet bullet = bulletsList.get(i);
+            Bullet bullet = playerBulletsList.get(i);
             
             // Move the bullet.
             bullet.Update();
             
             // Is left the screen?
             if(bullet.isItLeftScreen()){
-                bulletsList.remove(i);
+                playerBulletsList.remove(i);
                 // Bullet have left the screen so we removed it from the list and now we can continue to the next bullet.
                 continue;
             }
             
             // Did hit any enemy?
             // Rectangle of the bullet image.
-            Rectangle bulletRectangle = new Rectangle((int)bullet.xCoordinate, (int)bullet.yCoordinate, Bullet.bulletImg.getWidth(), Bullet.bulletImg.getHeight());
-            // Go trough all enemis.
+            Rectangle bulletRectangle = new Rectangle((int)bullet.xCoordinate, (int)bullet.yCoordinate,
+            		PlayerHelicopter.machineGunBulletImg.getWidth(),
+            		PlayerHelicopter.machineGunBulletImg.getHeight());
+            // Go trough all enemies.
             for(int j = 0; j < enemyHelicopterList.size(); j++)
             {
                 EnemyHelicopter eh = enemyHelicopterList.get(j);
@@ -638,14 +646,14 @@ public class Game {
                 // Current enemy rectangle.
                 Rectangle enemyRectangel = new Rectangle(eh.xCoordinate, eh.yCoordinate, EnemyHelicopter.helicopterBodyImg.getWidth(), EnemyHelicopter.helicopterBodyImg.getHeight());
 
-                // Is current bullet over currnet enemy?
+                // Is current bullet over current enemy?
                 if(bulletRectangle.intersects(enemyRectangel))
                 {
                     // Bullet hit the enemy so we reduce his health.
-                    eh.health -= Bullet.damagePower;
+                    eh.health -= bullet.damagePoints;
                     
                     // Bullet was also destroyed so we remove it.
-                    bulletsList.remove(i);
+                    playerBulletsList.remove(i);
                     
                     // That bullet hit enemy so we don't need to check other enemies.
                     break;
