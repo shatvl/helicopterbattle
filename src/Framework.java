@@ -82,8 +82,9 @@ public class Framework extends Canvas {
     private BufferedImage skyColorImg;
     private BufferedImage cloudLayer1Img;
     private BufferedImage cloudLayer2Img;
-    
-    
+    private BufferedImage gameIsLoading;
+    private BufferedImage gameLoad;
+
     public Framework ()
     {
         super();
@@ -123,11 +124,13 @@ public class Framework extends Canvas {
             gameTitleImg = ImageIO.read(new File("helicopter_battle_title.png"));
             cloudLayer1Img = ImageIO.read(new File("cloud_layer_1.png"));
             cloudLayer2Img = ImageIO.read(new File("cloud_layer_2.png"));
+            gameIsLoading = ImageIO.read(new File("loading_picture.jpg"));
+            gameLoad = ImageIO.read(new File("game_is_loading.png"));
         } 
         catch (IOException ex) 
         {
             Logger.getLogger(Framework.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }       
     }
     
     
@@ -251,7 +254,8 @@ public class Framework extends Canvas {
             break;
             case GAME_CONTENT_LOADING:
                 g2d.setColor(Color.white);
-                g2d.drawString("GAME is LOADING", frameWidth/2 - 50, frameHeight/2);
+                g2d.drawImage(gameIsLoading, 0, 0, frameWidth, frameHeight, null);
+                g2d.drawImage(gameLoad, frameWidth - 450, frameHeight - 400, null);            
             break;
         }
     }
@@ -346,8 +350,6 @@ public class Framework extends Canvas {
     
     private void drawMenuBackground(Graphics2D g2d){
         g2d.drawImage(skyColorImg,    0, 0, Framework.frameWidth, Framework.frameHeight, null);
-       // g2d.drawImage(cloudLayer1Img, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
-        // g2d.drawImage(cloudLayer2Img, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
         g2d.drawImage(menuBorderImg,  0, 0, Framework.frameWidth, Framework.frameHeight, null);
 
     }
