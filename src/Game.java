@@ -764,6 +764,20 @@ public class Game {
     			stonesList.remove(i);
     			continue;
     		}
+    		Rectangle stoneRectangle = new Rectangle(stone.xCoordinate, stone.yCoordinate, Stone.stoneImg.getWidth(), Stone.stoneImg.getHeight());
+    		Rectangle playerRect = new Rectangle(player.xCoordinate, player.yCoordinate, player.helicopterBodyImg.getWidth(), player.helicopterBodyImg.getHeight());
+    		if(playerRect.intersects(stoneRectangle)){
+                player.health = 0;
+                helicopter.stop();
+                stonesList.remove(i);
+                for(int exNum = 0; exNum < 3; exNum++){
+                    Animation expAnim = new Animation(explosionAnimImg, 134, 134, 12, 45, false, player.xCoordinate + exNum*60, player.yCoordinate - random.nextInt(100), exNum * 200 +random.nextInt(100));
+                    explosionsList.add(expAnim);
+                    expl.setFramePosition(0);
+                }
+                // Because player crashed with enemy the game will be over so we don't need to check other enemies.
+                break;
+            }
     		StoneSmoke ss = new StoneSmoke();
     		int yCoordinate = stone.yCoordinate + 10 - StoneSmoke.smokeImg.getHeight();
     		int xCoordinate = stone.xCoordinate + 6 + random.nextInt(3);
