@@ -86,6 +86,8 @@ public class Game {
     private int runAwayEnemies;
     private int destroyedEnemies;
     
+    private boolean bossFight;
+    
 
     public Game()
     {
@@ -716,7 +718,7 @@ public class Game {
             // Creates a rocket smoke.
             RocketSmoke rs = new RocketSmoke();
             int xCoordinate = rocket.xCoordinate - RocketSmoke.smokeImg.getWidth(); // Subtract the size of the rocket smoke image (rocketSmokeImg.getWidth()) so that smoke isn't drawn under/behind the image of rocket.
-            int yCoordinte = rocket.yCoordinate - 5 + random.nextInt(6); // Subtract 5 so that smok will be at the middle of the rocket on y coordinate. We rendomly add a number between 0 and 6 so that the smoke line isn't straight line.
+            int yCoordinte = rocket.yCoordinate - 5 + random.nextInt(6); // Subtract 5 so that smoke will be at the middle of the rocket on y coordinate. We rendomly add a number between 0 and 6 so that the smoke line isn't straight line.
             rs.Initialize(xCoordinate, yCoordinte, gameTime, rocket.currentSmokeLifeTime);
             rocketSmokeList.add(rs);
             
@@ -725,7 +727,7 @@ public class Game {
             int smokePositionX = 5 + random.nextInt(8); // We will draw this smoke a little bit ahead of the one we draw before.
             rs = new RocketSmoke();
             xCoordinate = rocket.xCoordinate - RocketSmoke.smokeImg.getWidth() + smokePositionX; // Here we need to add so that the smoke will not be on the same x coordinate as previous smoke. First we need to add 5 because we add random number from 0 to 8 and if the random number is 0 it would be on the same coordinate as smoke before.
-            yCoordinte = rocket.yCoordinate - 5 + random.nextInt(6); // Subtract 5 so that smok will be at the middle of the rocket on y coordinate. We rendomly add a number between 0 and 6 so that the smoke line isn't straight line.
+            yCoordinte = rocket.yCoordinate - 5 + random.nextInt(6); // Subtract 5 so that smoke will be at the middle of the rocket on y coordinate. We rendomly add a number between 0 and 6 so that the smoke line isn't straight line.
             rs.Initialize(xCoordinate, yCoordinte, gameTime, rocket.currentSmokeLifeTime);
             rocketSmokeList.add(rs);
             
