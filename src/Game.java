@@ -53,6 +53,8 @@ public class Game {
     // List of all the machine gun bullets.
     private ArrayList<Bullet> playerBulletsList;
     
+    private ArrayList<Bullet> bossBulletsList;
+    
     // List of all the rockets.
     private ArrayList<Rocket> rocketsList;
     // List of all the rockets smoke.
@@ -130,6 +132,7 @@ public class Game {
         explosionsList = new ArrayList<Animation>();
         
         playerBulletsList = new ArrayList<Bullet>();
+        bossBulletsList = new ArrayList<Bullet>();
         rocketsList = new ArrayList<Rocket>();
         bulletFire = new ArrayList<Animation>();
         rocketSmokeList = new ArrayList<RocketSmoke>();
@@ -190,6 +193,7 @@ public class Game {
             
             // Load images for Boss
             Boss.helicopterImg = ImageIO.read(new File("boss_1.png"));
+            Boss.bulletImg = ImageIO.read(new File("bullet.png"));
             
             // Load images for enemy helicopter
            // URL helicopterBodyImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_helicopter_body.png");
@@ -243,6 +247,7 @@ public class Game {
         stonesSmokeList.clear();
         enemyHelicopterList.clear();
         playerBulletsList.clear();
+        bossBulletsList.clear();
         rocketsList.clear();
         rocketSmokeList.clear();
         explosionsList.clear();
@@ -304,7 +309,7 @@ public class Game {
         }
         
         createEnemyHelicopter(gameTime);
-        updateEnemies();
+        updateEnemies(gameTime);
         
         /* Explosions */
         updateExplosions();
@@ -336,11 +341,14 @@ public class Game {
         }
         if(bossFight) {
         	boss.draw(g2d);
-        }
-        
-        for(int i = 0; i < stonesList.size(); i++)
-        {
-        	stonesList.get(i).Draw(g2d);
+	        for(int i = 0; i < stonesList.size(); i++)
+	        {
+	        	stonesList.get(i).Draw(g2d);
+	        }
+	        for(int i = 0; i < bossBulletsList.size(); i++)
+	        {
+	            bossBulletsList.get(i).Draw(g2d);
+	        }
         }
         // Draws all the bullets. 
         for(int i = 0; i < playerBulletsList.size(); i++)
@@ -386,6 +394,14 @@ public class Game {
         // Draw statistics
         g2d.setFont(font);
         g2d.setColor(Color.RED);
+        
+        if(bossFight) {
+        	g2d.drawString("HP: " + boss.health, (int)boss.xCoordinate, (int)boss.yCoordinate + 20);
+        }
+        g2d.drawString("HP: " + player.health, player.xCoordinate, player.yCoordinate - 5);
+        for(EnemyHelicopter eh : enemyHelicopterList) {
+        	g2d.drawString("HP: " + eh.health, eh.xCoordinate, eh.yCoordinate - 5);
+        }
         
         g2d.drawString(formatTime(gameTime), Framework.frameWidth/2 - 45, 21);
         g2d.drawString("DESTROYED: " + destroyedEnemies, 10, 21);
@@ -573,7 +589,7 @@ public class Game {
     	if(bossFight) {
     		return;
     	}
-    	if(runAwayEnemies + destroyedEnemies == numOfEnemiesForBoss) {
+    	if(destroyedEnemies == numOfEnemiesForBoss) {
     		bossFight = true;
     		runAwayEnemies = 0;
     		destroyedEnemies = 0;
@@ -633,20 +649,36 @@ public class Game {
      * Checks if enemy was destroyed.
      * Checks if any enemy collision with player.
      */
-    private void updateEnemies()
+    private void updateEnemies(long gameTime)
     {
     	if(bossFight) {
+    		// update boss position
+    		boss.updateVelocity(playerBulletsList, rocketsList);
     		boss.update();
+    		
+    		// create bullets!
+    		if(gameTime - boss.lastBulletSpawnTime >= Boss.timeBetweenBullets) {
+    			boss.lastBulletSpawnTime = gameTime;
+    			bossBulletsList.add(boss.spawnBullet(player.xCoordinate, player.yCoordinate));
+    		}
+    		
     		if(isPlayerCrashed(new Rectangle(player.xCoordinate, player.yCoordinate, player.helicopterBodyImg.getWidth(), player.helicopterBodyImg.getHeight()),
            		 new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, Boss.helicopterImg.getWidth(), Boss.helicopterImg.getHeight()))) {
     			bossFight = false;
-    			return;
-    		}
-    		if(boss.health <= 0) {
+    		} else if(boss.health <= 0) {
     			bossFight = false;
+    			
+    			// boss explosion
                 Animation expAnim = new Animation(explosionAnimImg, 134, 134, 12, 45, false, (int)boss.xCoordinate, (int)boss.yCoordinate - explosionAnimImg.getHeight()/3, 0);
                 explosionsList.add(expAnim);
                 expl.setFramePosition(0);
+                
+                // we may spawn enemies again
+                EnemyHelicopter.spawnEnemies = true;
+                
+                // clear stones if any
+                stonesList.clear();
+                stonesSmokeList.clear();
     		}
     	} else {
 	        for(int i = 0; i < enemyHelicopterList.size(); i++)
@@ -713,8 +745,8 @@ public class Game {
             // Did hit any enemy?
             // Rectangle of the bullet image.
             Rectangle bulletRectangle = new Rectangle((int)bullet.xCoordinate, (int)bullet.yCoordinate,
-            		PlayerHelicopter.machineGunBulletImg.getWidth(),
-            		PlayerHelicopter.machineGunBulletImg.getHeight());
+            		bullet.bulletImg.getWidth(),
+            		bullet.bulletImg.getHeight());
             // Go trough all enemies.
             for(int j = 0; j < enemyHelicopterList.size(); j++)
             {
@@ -735,6 +767,37 @@ public class Game {
                     // That bullet hit enemy so we don't need to check other enemies.
                     break;
                 }
+            }
+            // Check if boss is hit
+            if(bossFight && !boss.invincible) {
+            	Rectangle bossRect = new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, Boss.helicopterImg.getWidth(), Boss.helicopterImg.getHeight());
+            	if(bulletRectangle.intersects(bossRect)) {
+            		boss.health -= bullet.damagePoints;
+            		playerBulletsList.remove(i);
+            	}
+            }
+        }
+        for(int i = 0; i < bossBulletsList.size(); ++i) {
+        	Bullet bullet = bossBulletsList.get(i);
+            
+            // Move the bullet.
+            bullet.Update();
+            
+            // Is left the screen?
+            if(bullet.isItLeftScreen()) {
+                bossBulletsList.remove(i--);
+                // Bullet have left the screen so we removed it from the list and now we can continue to the next bullet.
+                continue;
+            }
+            
+            Rectangle bulletRectangle = new Rectangle((int)bullet.xCoordinate, (int)bullet.yCoordinate,
+            				  bullet.bulletImg.getWidth(),
+            				  bullet.bulletImg.getHeight()),
+            		  playerRectangle = new Rectangle(player.xCoordinate, player.yCoordinate, player.helicopterBodyImg.getWidth(),
+            				  player.helicopterBodyImg.getHeight());
+            if(bulletRectangle.intersects(playerRectangle)) {
+            	player.health -= bullet.damagePoints;
+            	bossBulletsList.remove(i--);
             }
         }
     }
@@ -871,6 +934,14 @@ public class Game {
                 // Rocket hit enemy so we don't need to check other enemies.
                 break;
             }
+        }
+        // Check boss
+        if(bossFight && !boss.invincible) {
+        	Rectangle bossRect = new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, Boss.helicopterImg.getWidth(), Boss.helicopterImg.getHeight());
+        	if(rocketRectangle.intersects(bossRect)) {
+        		didItHitEnemy = true;
+        		boss.health -= Rocket.damagePower;
+        	}
         }
         
         return didItHitEnemy;

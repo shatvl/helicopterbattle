@@ -9,14 +9,27 @@ public class Boss {
 	public double yCoordinate;
 	private double xVelocity;
 	private double yVelocity;
+	private double yAccel;
 	private int accelTime;
 	private int totalAccelTime;
-	private int curAccel;
 	private boolean isMoving;
+	public boolean invincible;
 	private Random random;
+	
+    private double offsetXMachineGun;
+    private double offsetYMachineGun;
+    
+    public double machineGunXcoordinate;
+    public double machineGunYcoordinate;
+    
+    long lastBulletSpawnTime = 0;
+    
 	static public BufferedImage helicopterImg;
-	static final double accel = 1.0;
+	static public BufferedImage bulletImg;
 	static final int initHealth = 1000;
+	static final long timeBetweenBullets = Framework.secInNanosec / 2;
+	static final int bulletSpeed = 10;
+	static final int bulletDamage = 40;
 	static final int rageHealth = 100;
 	
 	public Boss(int health, double xCoordinate, double yCoordinate) {
@@ -26,17 +39,39 @@ public class Boss {
 		this.yCoordinate = yCoordinate;
 		this.xVelocity = -1.0;
 		this.yVelocity = 0.0;
+		this.yAccel = 0.0;
 		this.isMoving = true;
+		this.invincible = true;
 		this.random = new Random();
-		this.accelTime = 0;
+		this.accelTime = (int)Math.ceil(0.5 * Boss.helicopterImg.getWidth() / Math.abs(xVelocity));
 		this.totalAccelTime = 0;
-		this.curAccel = 1;
+		
+		this.offsetXMachineGun = Boss.helicopterImg.getWidth() - 40;
+        this.offsetYMachineGun = Boss.helicopterImg.getHeight();
+        this.machineGunXcoordinate = this.xCoordinate + this.offsetXMachineGun;
+        this.machineGunYcoordinate = this.yCoordinate + this.offsetYMachineGun;
+	}
+	
+	private void calculateAccel(double yPos) {
+		yVelocity = 0.0;
+		yAccel = (yPos - yCoordinate) / (accelTime * accelTime);
+	}
+	
+	public Bullet spawnBullet(double x, double y) {
+		Vector2d direction = new Vector2d(x - machineGunXcoordinate, y - machineGunYcoordinate);
+		Vector2d velocity = direction.multiply(bulletSpeed / direction.length());
+		return new Bullet(machineGunXcoordinate, machineGunYcoordinate, velocity.x, velocity.y, bulletDamage, Boss.bulletImg);
 	}
 	
 	public void updateVelocity(ArrayList<Bullet> playerBullets, ArrayList<Rocket> playerRockets) {
 		if(!isMoving) {
-			if(playerBullets.size() == 0 && playerRockets.size() == 0) {
-			}
+			//if(playerBullets.size() == 0 && playerRockets.size() == 0) {
+				accelTime = 50 + random.nextInt(20);
+				calculateAccel(random.nextDouble() * (Framework.frameHeight - helicopterImg.getHeight()));
+			//} else {
+				
+			//}
+			isMoving = true;
 		}
 	}
 	
@@ -44,21 +79,24 @@ public class Boss {
 		if(health <= rageHealth) {
 			rageMode = true;
 		}
-		if(xCoordinate > Framework.frameWidth - Boss.helicopterImg.getWidth()) {
+		if(xCoordinate > Framework.frameWidth - Boss.helicopterImg.getWidth() - 50) {
 			xCoordinate += xVelocity;
+			machineGunXcoordinate = xCoordinate + offsetXMachineGun;
 		} else {
-			xVelocity = 0.0;
-			if(totalAccelTime == accelTime) {
-				curAccel *= -1;
-			}
-			if(totalAccelTime == 2*accelTime) {
-				isMoving = false;
-				curAccel *= -1;
-				totalAccelTime = 0;
-			} else {
-				yCoordinate += (totalAccelTime > 0 ? (totalAccelTime - 1)*curAccel*accel : 0) + 0.5*curAccel*accel;
-				++totalAccelTime;
-			}
+			invincible = false;
+		}
+	    if(totalAccelTime == accelTime) {
+			yAccel *= -1.0;
+		}
+		if(totalAccelTime == 2*accelTime) {
+			isMoving = false;
+			yAccel *= -1.0;
+			totalAccelTime = 0;
+		} else {
+			yCoordinate += yVelocity + 0.5*yAccel;
+			machineGunYcoordinate = yCoordinate + offsetYMachineGun;
+			yVelocity += yAccel;
+			++totalAccelTime;
 		}
 	}
 	

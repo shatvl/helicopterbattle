@@ -29,7 +29,8 @@ public class Bullet {
      * @param yCoordinate From which y coordinate was bullet fired?
      * @param xVelocity x component of velocity vector
      * @param yVelocity y component of velocity vector
-     * @param mousePosition Position of the mouse at the time of the shot.
+     * @param damagePoint how much damage bullet deals
+     * @param bullet bullet image
      */
     public Bullet(double xCoordinate, double yCoordinate, double xVelocity, double yVelocity, int damagePoints, BufferedImage bullet)
     {
