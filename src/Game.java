@@ -55,6 +55,8 @@ public class Game {
     
     private ArrayList<Bullet> bossBulletsList;
     
+    // List of all the bonuses
+    private ArrayList<Bonus> bonusList;
     // List of all the rockets.
     private ArrayList<Rocket> rocketsList;
     // List of all the rockets smoke.
@@ -131,6 +133,7 @@ public class Game {
         
         explosionsList = new ArrayList<Animation>();
         
+        bonusList = new ArrayList<Bonus>();
         playerBulletsList = new ArrayList<Bullet>();
         bossBulletsList = new ArrayList<Bullet>();
         rocketsList = new ArrayList<Rocket>();
@@ -195,6 +198,11 @@ public class Game {
             Boss.helicopterImg = ImageIO.read(new File("boss_1.png"));
             Boss.bulletImg = ImageIO.read(new File("bullet.png"));
             
+            // Load bonus images
+            /*HealthBonus.image = ImageIO.read(new File("health_shield.png"));
+            BulletBonus.image = ImageIO.read(new File("bullet_shield.png"));
+            RocketBonus.image = ImageIO.read(new File("rocket_shield.png"));*/            
+            
             // Load images for enemy helicopter
            // URL helicopterBodyImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_helicopter_body.png");
             EnemyHelicopter.helicopterBodyImg = ImageIO.read(new File("2_helicopter_body.png"));
@@ -244,6 +252,7 @@ public class Game {
         
         // Empty all the lists.
  
+        bonusList.clear();
         stonesSmokeList.clear();
         enemyHelicopterList.clear();
         playerBulletsList.clear();
@@ -297,6 +306,9 @@ public class Game {
         
         /* Bullets */
         updateBullets();
+        
+        /* Bonuses */
+        updateBonuses();
         
         /* Rockets */
         updateRockets(gameTime); // It also checks for collisions (if any of the rockets hit any of the enemy helicopter).
@@ -679,6 +691,8 @@ public class Game {
                 // clear stones if any
                 stonesList.clear();
                 stonesSmokeList.clear();
+                
+                bossBulletsList.clear();
     		}
     	} else {
 	        for(int i = 0; i < enemyHelicopterList.size(); i++)
@@ -720,6 +734,32 @@ public class Game {
 	        }
     	}
     }
+    
+    /**
+     * Update bonuses
+     * Spawn new if it's time
+     * Consume if collected
+     */
+    private void updateBonuses() {
+    	Rectangle playerRect = new Rectangle(player.xCoordinate, player.yCoordinate,
+    			player.helicopterBodyImg.getWidth(), player.helicopterBodyImg.getHeight());
+    	for(int i = 0; i < bonusList.size(); ++i) {
+    		Bonus bonus = bonusList.get(i);
+    		
+    		bonus.update();
+    		
+    		Rectangle bonusRect = new Rectangle(bonus.xCoordinate, bonus.yCoordinate,
+    				bonus.image.getWidth(), bonus.image.getHeight());
+    		
+    		if(playerRect.intersects(bonusRect)) {
+    			bonus.apply(player);
+    			bonusList.remove(i--);
+    		} else if(bonus.isLeftScreen()){
+    			bonusList.remove(i--);
+    		}
+    	}
+    }
+    
     /**
      * Update bullets. 
      * It moves bullets.

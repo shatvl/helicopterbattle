@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
 public class PlayerHelicopter {
     
     // Health of the helicopter.
-    private final int healthInit = 100;
+    public static final int healthInit = 100;
     public int health;
     
     // Position of the helicopter on the screen.
@@ -73,6 +73,9 @@ public class PlayerHelicopter {
     // Position on the frame/window of the helicopter machine gun.
     public int machineGunXcoordinate;
     public int machineGunYcoordinate;
+    
+    // Bonuses
+    Bonus shieldBonus;
     
     
     /**
