@@ -212,7 +212,7 @@ public class PlayerHelicopter {
     {
         // Moving on the x coordinate.
         if(Canvas.keyboardKeyState(KeyEvent.VK_D) || Canvas.keyboardKeyState(KeyEvent.VK_RIGHT))
-            movingXspeed += acceleratingXspeed;
+        	movingXspeed += acceleratingXspeed;
         else if(Canvas.keyboardKeyState(KeyEvent.VK_A) || Canvas.keyboardKeyState(KeyEvent.VK_LEFT))
             movingXspeed -= acceleratingXspeed;
         else    // Stoping
@@ -253,8 +253,16 @@ public class PlayerHelicopter {
     public void Update()
     {
         // Move helicopter and its propellers.
-        xCoordinate += movingXspeed;
-        yCoordinate += movingYspeed;
+    	double xC = xCoordinate += movingXspeed;
+    	if(xC < 0 || xC > Framework.frameWidth - this.helicopterBodyImg.getWidth())
+    	{
+    		movingXspeed = 0;
+    	}
+        double yC = yCoordinate += movingYspeed;
+        if(yC < 0 || yC > Framework.frameHeight - this.helicopterBodyImg.getHeight())
+        {
+        	movingYspeed = 0;
+        }
         helicopterRearPropellerAnim.changeCoordinates(xCoordinate + offsetXRearPropeller, yCoordinate + offsetYRearPropeller);
         
         // Change position of the rocket holder.

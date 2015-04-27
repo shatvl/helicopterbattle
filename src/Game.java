@@ -394,7 +394,7 @@ public class Game {
         // Draw statistics
         g2d.setFont(font);
         g2d.setColor(Color.RED);
-        
+      
         if(bossFight) {
         	g2d.drawString("HP: " + boss.health, (int)boss.xCoordinate, (int)boss.yCoordinate + 20);
         }
