@@ -630,7 +630,7 @@ public class Game {
     	if(destroyedEnemies == level * numOfEnemiesForBoss) {
     		bossFight = true;
     		BufferedImage bossImg = random.nextInt() % 2 == 0 ? Boss.helicopter1Img : Boss.helicopter2Img;
-    		boss = new Boss(Boss.initHealth, Framework.frameWidth,
+    		boss = new Boss(level * Boss.initHealth, Framework.frameWidth,
     				Framework.frameHeight / 2 - bossImg.getHeight() / 2,
     				bossImg);
     		enemyHelicopterList.clear();

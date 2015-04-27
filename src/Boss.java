@@ -29,7 +29,7 @@ public class Boss {
 	static public BufferedImage helicopter1Img;
 	static public BufferedImage helicopter2Img;
 	static public BufferedImage bulletImg;
-	static final int initHealth = 2000;
+	static final int initHealth = 500;
 	static final long timeBetweenBullets = Framework.secInNanosec / 2;
 	static final int bulletSpeed = 10;
 	static final int bulletDamage = 40;
