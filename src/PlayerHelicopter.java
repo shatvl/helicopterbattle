@@ -20,7 +20,7 @@ import javax.imageio.ImageIO;
 public class PlayerHelicopter {
     
     // Health of the helicopter.
-    private final int healthInit = 100;
+    public static final int healthInit = 100;
     public int health;
     
     // Position of the helicopter on the screen.
@@ -36,11 +36,11 @@ public class PlayerHelicopter {
     private double stoppingYspeed;
     
     // Helicopter rockets.
-    private final int numberOfRocketsInit = 80;
+    private final int numberOfRocketsInit = 15;
     public int numberOfRockets;
     
     // Helicopter machinegun ammo.
-    private final int numberOfAmmoInit = 1400;
+    private final int numberOfAmmoInit = 500;
     public int numberOfAmmo;
     
     // Helicopter machinegun bullet params
@@ -73,6 +73,9 @@ public class PlayerHelicopter {
     // Position on the frame/window of the helicopter machine gun.
     public int machineGunXcoordinate;
     public int machineGunYcoordinate;
+    
+    // Bonuses
+    Bonus shieldBonus;
     
     
     /**
@@ -154,6 +157,8 @@ public class PlayerHelicopter {
         this.numberOfRockets = numberOfRocketsInit;
         this.numberOfAmmo = numberOfAmmoInit;
         
+        this.shieldBonus = null;
+        
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
         
@@ -212,7 +217,7 @@ public class PlayerHelicopter {
     {
         // Moving on the x coordinate.
         if(Canvas.keyboardKeyState(KeyEvent.VK_D) || Canvas.keyboardKeyState(KeyEvent.VK_RIGHT))
-            movingXspeed += acceleratingXspeed;
+        	movingXspeed += acceleratingXspeed;
         else if(Canvas.keyboardKeyState(KeyEvent.VK_A) || Canvas.keyboardKeyState(KeyEvent.VK_LEFT))
             movingXspeed -= acceleratingXspeed;
         else    // Stoping
@@ -253,8 +258,16 @@ public class PlayerHelicopter {
     public void Update()
     {
         // Move helicopter and its propellers.
-        xCoordinate += movingXspeed;
-        yCoordinate += movingYspeed;
+    	double xC = xCoordinate += movingXspeed;
+    	if(xC < 0 || xC > Framework.frameWidth - this.helicopterBodyImg.getWidth())
+    	{
+    		movingXspeed = 0;
+    	}
+        double yC = yCoordinate += movingYspeed;
+        if(yC < 0 || yC > Framework.frameHeight - this.helicopterBodyImg.getHeight())
+        {
+        	movingYspeed = 0;
+        }
         helicopterRearPropellerAnim.changeCoordinates(xCoordinate + offsetXRearPropeller, yCoordinate + offsetYRearPropeller);
         
         // Change position of the rocket holder.
