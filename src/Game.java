@@ -193,7 +193,7 @@ public class Game {
             
             // Load images for Boss
             Boss.helicopterImg = ImageIO.read(new File("boss_1.png"));
-            Boss.bulletImg = ImageIO.read(new File("bullet.png"));
+            Boss.bulletImg = ImageIO.read(new File("boss_bullet.png"));
             
             // Load images for enemy helicopter
            // URL helicopterBodyImgUrl = this.getClass().getResource("/helicopterbattle/resources/images/2_helicopter_body.png");
