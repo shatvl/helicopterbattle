@@ -198,7 +198,8 @@ public class Game {
             PlayerHelicopter.machineGunBulletImg = ImageIO.read(new File("bullet.png"));
             
             // Load images for Boss
-            Boss.helicopterImg = ImageIO.read(new File("boss_1.png"));
+            Boss.helicopter1Img = ImageIO.read(new File("boss_1.png"));
+            Boss.helicopter2Img = ImageIO.read(new File("boss_2.png"));
             Boss.bulletImg = ImageIO.read(new File("boss_bullet.png"));
             
             // Load bonus images
@@ -628,7 +629,10 @@ public class Game {
     	}
     	if(destroyedEnemies == level * numOfEnemiesForBoss) {
     		bossFight = true;
-    		boss = new Boss(Boss.initHealth, Framework.frameWidth, Framework.frameHeight / 2 - Boss.helicopterImg.getHeight() / 2);
+    		BufferedImage bossImg = random.nextInt() % 2 == 0 ? Boss.helicopter1Img : Boss.helicopter2Img;
+    		boss = new Boss(Boss.initHealth, Framework.frameWidth,
+    				Framework.frameHeight / 2 - bossImg.getHeight() / 2,
+    				bossImg);
     		enemyHelicopterList.clear();
     		EnemyHelicopter.spawnEnemies = false;
     	} else if(EnemyHelicopter.spawnEnemies && gameTime - EnemyHelicopter.timeOfLastCreatedEnemy >= EnemyHelicopter.timeBetweenNewEnemies) {
@@ -701,7 +705,7 @@ public class Game {
     		
     		if(player.shieldBonus == null &&
     		   isPlayerCrashed(new Rectangle(player.xCoordinate, player.yCoordinate, player.helicopterBodyImg.getWidth(), player.helicopterBodyImg.getHeight()),
-    				   new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, Boss.helicopterImg.getWidth(), Boss.helicopterImg.getHeight()))) {
+    				   new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, boss.helicopterImg.getWidth(), boss.helicopterImg.getHeight()))) {
     			bossFight = false;
     		} else if(boss.health <= 0) {
     			++level;
@@ -870,7 +874,7 @@ public class Game {
             }
             // Check if boss is hit
             if(bossFight && !boss.invincible) {
-            	Rectangle bossRect = new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, Boss.helicopterImg.getWidth(), Boss.helicopterImg.getHeight());
+            	Rectangle bossRect = new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, boss.helicopterImg.getWidth(), boss.helicopterImg.getHeight());
             	if(bulletRectangle.intersects(bossRect)) {
             		boss.health -= bullet.damagePoints;
             		playerBulletsList.remove(i);
@@ -1039,7 +1043,7 @@ public class Game {
         }
         // Check boss
         if(bossFight && !boss.invincible) {
-        	Rectangle bossRect = new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, Boss.helicopterImg.getWidth(), Boss.helicopterImg.getHeight());
+        	Rectangle bossRect = new Rectangle((int)boss.xCoordinate, (int)boss.yCoordinate, boss.helicopterImg.getWidth(), boss.helicopterImg.getHeight());
         	if(rocketRectangle.intersects(bossRect)) {
         		didItHitEnemy = true;
         		boss.health -= Rocket.damagePower;

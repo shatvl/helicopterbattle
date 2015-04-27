@@ -24,15 +24,18 @@ public class Boss {
     
     long lastBulletSpawnTime = 0;
     
-	static public BufferedImage helicopterImg;
+    public BufferedImage helicopterImg;
+    
+	static public BufferedImage helicopter1Img;
+	static public BufferedImage helicopter2Img;
 	static public BufferedImage bulletImg;
-	static final int initHealth = 1000;
+	static final int initHealth = 2000;
 	static final long timeBetweenBullets = Framework.secInNanosec / 2;
 	static final int bulletSpeed = 10;
 	static final int bulletDamage = 40;
-	static final int rageHealth = 100;
+	static final int rageHealth = initHealth / 2;
 	
-	public Boss(int health, double xCoordinate, double yCoordinate) {
+	public Boss(int health, double xCoordinate, double yCoordinate, BufferedImage helicopterImg) {
 		this.health = health;
 		this.rageMode = false;
 		this.xCoordinate = xCoordinate;
@@ -43,11 +46,12 @@ public class Boss {
 		this.isMoving = true;
 		this.invincible = true;
 		this.random = new Random();
-		this.accelTime = (int)Math.ceil(0.5 * Boss.helicopterImg.getWidth() / Math.abs(xVelocity));
+		this.helicopterImg = helicopterImg;
+		this.accelTime = (int)Math.ceil(0.5 * helicopterImg.getWidth() / Math.abs(xVelocity));
 		this.totalAccelTime = 0;
 		
-		this.offsetXMachineGun = Boss.helicopterImg.getWidth() - 40;
-        this.offsetYMachineGun = Boss.helicopterImg.getHeight();
+		this.offsetXMachineGun = helicopterImg.getWidth() - 40;
+        this.offsetYMachineGun = helicopterImg.getHeight();
         this.machineGunXcoordinate = this.xCoordinate + this.offsetXMachineGun;
         this.machineGunYcoordinate = this.yCoordinate + this.offsetYMachineGun;
 	}
@@ -79,7 +83,7 @@ public class Boss {
 		if(health <= rageHealth) {
 			rageMode = true;
 		}
-		if(xCoordinate > Framework.frameWidth - Boss.helicopterImg.getWidth() - 50) {
+		if(xCoordinate > Framework.frameWidth - helicopterImg.getWidth() - 50) {
 			xCoordinate += xVelocity;
 			machineGunXcoordinate = xCoordinate + offsetXMachineGun;
 		} else {
