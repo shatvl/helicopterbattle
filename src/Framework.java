@@ -98,7 +98,7 @@ public class Framework extends Canvas {
         Thread gameThread = new Thread() {
             @Override
             public void run(){
-                GameLoop();
+                gameLoop();
             }
         };
         gameThread.start();
@@ -109,7 +109,7 @@ public class Framework extends Canvas {
      * Set variables and objects.
      * This method is intended to set the variables and objects for this class, variables and objects for the actual game can be set in Game.java.
      */
-    private void Initialize()
+    private void initialize()
     {
         font = new Font("monospaced", Font.BOLD, 28);
     }
@@ -118,7 +118,7 @@ public class Framework extends Canvas {
      * Load files (images).
      * This method is intended to load files for this class, files for the actual game can be loaded in Game.java.
      */
-    private void LoadContent()
+    private void loadContent()
     {
         try 
         {
@@ -140,7 +140,7 @@ public class Framework extends Canvas {
     /**
      * In specific intervals of time (GAME_UPDATE_PERIOD) the game/logic is updated and then the game is drawn on the screen.
      */
-    private void GameLoop()
+    private void gameLoop()
     {
         // This two variables are used in VISUALIZING state of the game. We used them to wait some time so that we get correct frame/window resolution.
         long visualizingTime = 0, lastVisualizingTime = System.nanoTime();
@@ -159,7 +159,7 @@ public class Framework extends Canvas {
                     
                     lastTime = System.nanoTime();
                     
-                    game.UpdateGame(gameTime, mousePosition());
+                    game.updateGame(gameTime, mousePosition());
                     
                     //lastTime = System.nanoTime();
                 break;
@@ -177,9 +177,9 @@ public class Framework extends Canvas {
                 break;
                 case STARTING:
                     // Sets variables and objects.
-                    Initialize();
+                    initialize();
                     // Load files - images, sounds, ...
-                    LoadContent();
+                    loadContent();
                     
                     // When all things that are called above finished, we change game status to main menu.
                     gameState = GameState.MAIN_MENU;
@@ -224,21 +224,21 @@ public class Framework extends Canvas {
      * Draw the game to the screen. It is called through repaint() method in GameLoop() method.
      */
     @Override
-    public void Draw(Graphics2D g2d)
+    public void draw(Graphics2D g2d)
     {
     	long drawStart;
         switch (gameState)
         {
             case PLAYING:
             	drawStart = System.nanoTime();
-                game.Draw(g2d, mousePosition(), gameTime);
+                game.draw(g2d, mousePosition(), gameTime);
                 g2d.drawString("FPS: "       + secInNanosec / (System.nanoTime() - drawStart), 10, 121);
             break;
             case GAMEOVER:
                 drawMenuBackground(g2d);
                 g2d.setColor(Color.black);
                 g2d.drawString("Press ENTER to restart or ESC to exit.", frameWidth/2 - 113, frameHeight/4 + 30);
-                game.DrawStatistic(g2d, gameTime);
+                game.drawStatistic(g2d, gameTime);
                 g2d.setFont(font);
                 g2d.drawString("GAME OVER", frameWidth/2 - 90, frameHeight/4);
             break;
@@ -283,7 +283,7 @@ public class Framework extends Canvas {
         gameTime = 0;
         lastTime = System.nanoTime();
         
-        game.RestartGame();
+        game.restartGame();
         
         // We change game status so that the game can start.
         gameState = GameState.PLAYING;

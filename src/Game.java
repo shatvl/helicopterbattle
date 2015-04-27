@@ -105,9 +105,9 @@ public class Game {
             @Override
             public void run(){
                 // Sets variables and objects for the game.
-                Initialize();
+                initialize();
                 // Load game files (images, sounds, ...)
-                LoadContent();
+                loadContent();
                 
                 Framework.gameState = Framework.GameState.PLAYING;
             }
@@ -119,7 +119,7 @@ public class Game {
    /**
      * Set variables and objects for the game.
      */
-    private void Initialize()
+    private void initialize()
     {
         random = new Random();
         
@@ -160,7 +160,7 @@ public class Game {
     /**
      * Load game files (images).
      */
-    private void LoadContent()
+    private void loadContent()
     {
         try 
         {
@@ -245,9 +245,9 @@ public class Game {
     /**
      * Restart game - reset some variables.
      */
-    public void RestartGame()
+    public void restartGame()
     {
-        player.Reset(Framework.frameWidth / 4, Framework.frameHeight / 4);
+        player.reset(Framework.frameWidth / 4, Framework.frameHeight / 4);
         
         EnemyHelicopter.restartEnemy();
         Stone.restartStone();
@@ -280,7 +280,7 @@ public class Game {
      * @param gameTime The elapsed game time in nanoseconds.
      * @param mousePosition current mouse position.
      */
-    public void UpdateGame(long gameTime, Point mousePosition)
+    public void updateGame(long gameTime, Point mousePosition)
     {
         /* Player */
         // When player is destroyed and all explosions are finished showing we change game status.
@@ -340,7 +340,7 @@ public class Game {
      * @param g2d Graphics2D
      * @param mousePosition current mouse position.
      */
-    public void Draw(Graphics2D g2d, Point mousePosition, long gameTime)
+    public void draw(Graphics2D g2d, Point mousePosition, long gameTime)
     {
         // Image for background sky color.
         g2d.drawImage(skyColorImg, 0, 0, Framework.frameWidth, Framework.frameHeight, null);
@@ -362,17 +362,17 @@ public class Game {
         	boss.draw(g2d);
 	        for(int i = 0; i < stonesList.size(); i++)
 	        {
-	        	stonesList.get(i).Draw(g2d);
+	        	stonesList.get(i).draw(g2d);
 	        }
 	        for(int i = 0; i < bossBulletsList.size(); i++)
 	        {
-	            bossBulletsList.get(i).Draw(g2d);
+	            bossBulletsList.get(i).draw(g2d);
 	        }
         }
         // Draws all the bullets. 
         for(int i = 0; i < playerBulletsList.size(); i++)
         {
-            playerBulletsList.get(i).Draw(g2d);
+            playerBulletsList.get(i).draw(g2d);
            
         }
         
@@ -392,7 +392,7 @@ public class Game {
         // Draws all the rockets. 
         for(int i = 0; i < rocketsList.size(); i++)
         {
-            rocketsList.get(i).Draw(g2d);
+            rocketsList.get(i).draw(g2d);
         }
         // Draws smoke of all the rockets.
         for(int i = 0; i < rocketSmokeList.size(); i++)
@@ -461,7 +461,7 @@ public class Game {
      * @param g2d Graphics2D
      * @param gameTime Elapsed game time.
      */
-    public void DrawStatistic(Graphics2D g2d, long gameTime){
+    public void drawStatistic(Graphics2D g2d, long gameTime){
         g2d.drawString("Time: " + formatTime(gameTime),                Framework.frameWidth/2 - 50, Framework.frameHeight/3 + 80);
         g2d.drawString("Rockets left: "      + player.numberOfRockets, Framework.frameWidth/2 - 55, Framework.frameHeight/3 + 105);
         g2d.drawString("Ammo left: "         + player.numberOfAmmo,    Framework.frameWidth/2 - 55, Framework.frameHeight/3 + 125);
@@ -612,7 +612,7 @@ public class Game {
             player.numberOfRockets--;
             fireRocket.start();
             Rocket r = new Rocket();
-            r.Initialize(player.rocketHolderXcoordinate, player.rocketHolderYcoordinate);
+            r.initialize(player.rocketHolderXcoordinate, player.rocketHolderYcoordinate);
             rocketsList.add(r);
         }
     }
@@ -841,7 +841,7 @@ public class Game {
             Bullet bullet = playerBulletsList.get(i);
             
             // Move the bullet.
-            bullet.Update();
+            bullet.update();
             
             // Is left the screen?
             if(bullet.isItLeftScreen()){
@@ -889,7 +889,7 @@ public class Game {
         	Bullet bullet = bossBulletsList.get(i);
             
             // Move the bullet.
-            bullet.Update();
+            bullet.update();
             
             // Is left the screen?
             if(bullet.isItLeftScreen()) {
@@ -931,7 +931,7 @@ public class Game {
             Rocket rocket = rocketsList.get(i);
             
             // Moves the rocket.
-            rocket.Update();
+            rocket.update();
             
             // Checks if it is left the screen.
             if(rocket.isItLeftScreen())
@@ -975,7 +975,7 @@ public class Game {
     		Stone st = new Stone();
     		int yCoordinate = 0;
     		int xCoordinate = random.nextInt(Framework.frameWidth - Stone.stoneImg.getWidth());
-    		st.Initialize(xCoordinate, yCoordinate);
+    		st.initialize(xCoordinate, yCoordinate);
     		stonesList.add(st);
     		Stone.speedUp();
     		Stone.timeOfLastCreatedEnemy = gameTime;
@@ -984,7 +984,7 @@ public class Game {
     	for(int i = 0; i < stonesList.size(); i++)
     	{
     		Stone stone = stonesList.get(i);
-    		stone.Update();
+    		stone.update();
     		if(stone.isBottomScreen())
     		{
     			stonesList.remove(i);

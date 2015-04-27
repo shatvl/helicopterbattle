@@ -75,7 +75,7 @@ public class PlayerHelicopter {
     public int machineGunYcoordinate;
     
     // Bonuses
-    Bonus shieldBonus;
+    public Bonus shieldBonus;
     
     
     /**
@@ -89,15 +89,15 @@ public class PlayerHelicopter {
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
         
-        LoadContent();
-        Initialize();
+        loadContent();
+        initialize();
     }
     
     
     /**
      * Set variables and objects for this class.
      */
-    private void Initialize()
+    private void initialize()
     {
         this.health = healthInit;
         
@@ -128,7 +128,7 @@ public class PlayerHelicopter {
     /**
      * Load files for this class.
      */
-    private void LoadContent()
+    private void loadContent()
     {
         try 
         {
@@ -150,7 +150,7 @@ public class PlayerHelicopter {
      * @param xCoordinate Starting x coordinate of helicopter.
      * @param yCoordinate Starting y coordinate of helicopter.
      */
-    public void Reset(int xCoordinate, int yCoordinate)
+    public void reset(int xCoordinate, int yCoordinate)
     {
         this.health = healthInit;
         

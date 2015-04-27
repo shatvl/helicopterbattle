@@ -36,7 +36,7 @@ public class Rocket {
     /**
      * Set variables and objects for this class.
      */
-    public void Initialize(int xCoordinate, int yCoordinate)
+    public void initialize(int xCoordinate, int yCoordinate)
     {
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
@@ -64,7 +64,7 @@ public class Rocket {
     /**
      * Moves the rocket.
      */
-    public void Update()
+    public void update()
     {
         xCoordinate += movingXspeed;
     }
@@ -75,7 +75,7 @@ public class Rocket {
      * 
      * @param g2d Graphics2D
      */
-    public void Draw(Graphics2D g2d)
+    public void draw(Graphics2D g2d)
     {
         g2d.drawImage(rocketImg, xCoordinate, yCoordinate, null);
     }

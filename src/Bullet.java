@@ -57,7 +57,7 @@ public class Bullet {
     /**
      * Moves the bullet.
      */
-    public void Update()
+    public void update()
     {
         xCoordinate += xVelocity;
         yCoordinate += yVelocity;
@@ -69,7 +69,7 @@ public class Bullet {
      * 
      * @param g2d Graphics2D
      */
-    public void Draw(Graphics2D g2d)
+    public void draw(Graphics2D g2d)
     {
         g2d.drawImage(bulletImg, (int)xCoordinate, (int)yCoordinate, null);
     }
