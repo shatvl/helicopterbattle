@@ -651,6 +651,15 @@ public class Game {
         }
     }
     
+    private void addPlayerExplosion() {
+        for(int exNum = 0; exNum < 3; exNum++){
+            Animation expAnim = new Animation(explosionAnimImg, 134, 134, 12, 45, false, player.xCoordinate + exNum*60,
+            		player.yCoordinate - random.nextInt(100), exNum * 200 +random.nextInt(100));
+            explosionsList.add(expAnim);
+            expl.setFramePosition(0);
+        }
+    }
+    
     /**
      * Checks if player crashed with enemy, ends the game if he did
      * @param playerRectangle
@@ -664,12 +673,7 @@ public class Game {
 	            helicopter.stop();
 	            
 	            // Add explosion of player helicopter.
-	            for(int exNum = 0; exNum < 3; exNum++){
-	                Animation expAnim = new Animation(explosionAnimImg, 134, 134, 12, 45, false, player.xCoordinate + exNum*60,
-	                		player.yCoordinate - random.nextInt(100), exNum * 200 +random.nextInt(100));
-	                explosionsList.add(expAnim);
-	                expl.setFramePosition(0);
-	            }
+	            addPlayerExplosion();
         	}
             // Add explosion of enemy helicopter.
             for(int exNum = 0; exNum < 3; exNum++){
@@ -899,9 +903,12 @@ public class Game {
             				  bullet.bulletImg.getHeight()),
             		  playerRectangle = new Rectangle(player.xCoordinate, player.yCoordinate, player.helicopterBodyImg.getWidth(),
             				  player.helicopterBodyImg.getHeight());
-            if(bulletRectangle.intersects(playerRectangle)) {
+            if(player.health > 0 && bulletRectangle.intersects(playerRectangle)) {
             	if(player.shieldBonus == null) {
             		player.health -= bullet.damagePoints;
+            		if(player.health <= 0) {
+            			addPlayerExplosion();
+            		}
             	}
             	bossBulletsList.remove(i--);
             }
