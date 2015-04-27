@@ -2,9 +2,10 @@ import java.awt.image.BufferedImage;
 
 public class ShieldBonus extends Bonus {
 	public static BufferedImage image;
+	public static BufferedImage guiIcon;
 
-	public ShieldBonus(int xCoordinate, int yCoordinate, long secDuration, int fallingSpeed) {
-		super(xCoordinate, yCoordinate, secDuration, fallingSpeed, ShieldBonus.image);
+	public ShieldBonus(double xCoordinate, double yCoordinate, long secDuration, double fallingSpeed) {
+		super(xCoordinate, yCoordinate, secDuration, fallingSpeed, 0, ShieldBonus.image);
 	}
 	
 	@Override

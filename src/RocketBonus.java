@@ -4,8 +4,8 @@ public class RocketBonus extends Bonus {
 	int rockets;
 	public static BufferedImage image;
 	
-	public RocketBonus(int xCoordinate, int yCoordinate, long secDuration, int fallingSpeed, int rockets) {
-		super(xCoordinate, yCoordinate, secDuration, fallingSpeed, RocketBonus.image);
+	public RocketBonus(double xCoordinate, double yCoordinate, double fallingSpeed, int rockets) {
+		super(xCoordinate, yCoordinate, 0, fallingSpeed, 0L, RocketBonus.image);
 		this.rockets = rockets;
 	}
 

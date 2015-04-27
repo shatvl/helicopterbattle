@@ -4,20 +4,23 @@ import java.awt.*;
 public abstract class Bonus {
 	// Duration of bonus in seconds
 	public long secDuration;
+	// When item was consumed
+	public long consumeTime;
 	// Falling speed in pixels per frame
-	public int fallingSpeed;
+	public double fallingSpeed;
 	// Bonus image
 	public BufferedImage image;
 	
-	public int xCoordinate;
-	public int yCoordinate;
+	public double xCoordinate;
+	public double yCoordinate;
 	
-	protected Bonus(int xCoordinate, int yCoordinate, long secDuration, int fallingSpeed,
-			BufferedImage image) {
+	protected Bonus(double xCoordinate, double yCoordinate, long secDuration, double fallingSpeed,
+			long consumeTime, BufferedImage image) {
 		this.xCoordinate = xCoordinate;
 		this.yCoordinate = yCoordinate;
 		this.secDuration = secDuration;
 		this.fallingSpeed = fallingSpeed;
+		this.consumeTime = consumeTime;
 		this.image = image;
 	}
 	
@@ -29,7 +32,7 @@ public abstract class Bonus {
 	}
 	
 	public void draw(Graphics2D g2d) {
-		g2d.drawImage(image, xCoordinate, yCoordinate, null);
+		g2d.drawImage(image, (int)xCoordinate, (int)yCoordinate, null);
 	}
 	
 	public boolean isLeftScreen() {
