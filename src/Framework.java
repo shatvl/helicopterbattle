@@ -43,6 +43,11 @@ public class Framework extends Canvas {
     public static final long milisecInNanosec = 1000000L;
     
     /**
+     * Sleep time between frames in milliseconds
+     */
+    public static final long msecBetweenFrames = 10L;
+    
+    /**
      * FPS - Frames per second
      * How many times per second the game should update?
      */
@@ -209,7 +214,7 @@ public class Framework extends Canvas {
             timeLeft = (GAME_UPDATE_PERIOD - timeTaken) / milisecInNanosec; // In milliseconds
             
             try {
-				Thread.sleep(10);
+				Thread.sleep(Framework.msecBetweenFrames);
 			} catch (InterruptedException e) {
 			}
         }
