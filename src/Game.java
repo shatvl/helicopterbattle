@@ -196,7 +196,7 @@ public class Game {
             
             // Load images for Boss
             Boss.helicopterImg = ImageIO.read(new File("boss_1.png"));
-            Boss.bulletImg = ImageIO.read(new File("bullet.png"));
+            Boss.bulletImg = ImageIO.read(new File("boss_bullet.png"));
             
             // Load bonus images
             /*HealthBonus.image = ImageIO.read(new File("health_shield.png"));
@@ -406,7 +406,7 @@ public class Game {
         // Draw statistics
         g2d.setFont(font);
         g2d.setColor(Color.RED);
-        
+      
         if(bossFight) {
         	g2d.drawString("HP: " + boss.health, (int)boss.xCoordinate, (int)boss.yCoordinate + 20);
         }
