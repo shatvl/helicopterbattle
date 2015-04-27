@@ -153,7 +153,7 @@ public class Game {
         
         runAwayEnemies = 0;
         destroyedEnemies = 0;
-        numOfEnemiesForBoss = 1;
+        numOfEnemiesForBoss = 7;
         level = 1;
     }
     

@@ -157,6 +157,8 @@ public class PlayerHelicopter {
         this.numberOfRockets = numberOfRocketsInit;
         this.numberOfAmmo = numberOfAmmoInit;
         
+        this.shieldBonus = null;
+        
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
         
