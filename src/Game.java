@@ -985,7 +985,7 @@ public class Game {
     		}
     		Rectangle stoneRectangle = new Rectangle(stone.xCoordinate, stone.yCoordinate, Stone.stoneImg.getWidth(), Stone.stoneImg.getHeight());
     		Rectangle playerRect = new Rectangle(player.xCoordinate, player.yCoordinate, player.helicopterBodyImg.getWidth(), player.helicopterBodyImg.getHeight());
-    		if(playerRect.intersects(stoneRectangle)){
+    		if(player.shieldBonus == null && playerRect.intersects(stoneRectangle)){
                 player.health = 0;
                 helicopter.stop();
                 stonesList.remove(i);
