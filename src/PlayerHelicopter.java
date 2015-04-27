@@ -36,11 +36,11 @@ public class PlayerHelicopter {
     private double stoppingYspeed;
     
     // Helicopter rockets.
-    private final int numberOfRocketsInit = 80;
+    private final int numberOfRocketsInit = 15;
     public int numberOfRockets;
     
     // Helicopter machinegun ammo.
-    private final int numberOfAmmoInit = 1400;
+    private final int numberOfAmmoInit = 500;
     public int numberOfAmmo;
     
     // Helicopter machinegun bullet params

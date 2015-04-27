@@ -783,11 +783,11 @@ public class Game {
     			break;
     		case 1:
     			bonusList.add(new BulletBonus(random.nextInt(Framework.frameWidth - BulletBonus.image.getWidth()),
-    					-BulletBonus.image.getHeight(), speed, 16));
+    					-BulletBonus.image.getHeight(), speed, 100));
     			break;
     		case 2:
     			bonusList.add(new RocketBonus(random.nextInt(Framework.frameWidth - RocketBonus.image.getWidth()),
-    					-RocketBonus.image.getHeight(), speed, 4));
+    					-RocketBonus.image.getHeight(), speed, 5));
     			break;
     		case 3:
     			bonusList.add(new ShieldBonus(random.nextInt(Framework.frameWidth - ShieldBonus.image.getWidth()),
